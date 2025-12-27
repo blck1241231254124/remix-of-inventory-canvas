@@ -8,7 +8,8 @@ import {
   outgoingGoodsApi, 
   itemRequestApi, 
   purchaseOrderApi, 
-  stockMovementApi 
+  stockMovementApi,
+  dashboardApi,
 } from '@/lib/api';
 import { 
   User, 
@@ -32,6 +33,7 @@ export const queryKeys = {
   itemRequests: ['itemRequests'] as const,
   purchaseOrders: ['purchaseOrders'] as const,
   stockMovements: ['stockMovements'] as const,
+  dashboard: ['dashboard'] as const,
 };
 
 // Users Hooks
@@ -45,8 +47,7 @@ export const useUsers = () => {
 export const useCreateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => 
-      Promise.resolve(userApi.create(data)),
+    mutationFn: (data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => userApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users });
     },
@@ -56,8 +57,7 @@ export const useCreateUser = () => {
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<User> }) =>
-      Promise.resolve(userApi.update(id, updates)),
+    mutationFn: ({ id, updates }: { id: string; updates: Partial<User> }) => userApi.update(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users });
     },
@@ -67,7 +67,7 @@ export const useUpdateUser = () => {
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(userApi.delete(id)),
+    mutationFn: (id: string) => userApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users });
     },
@@ -85,8 +85,7 @@ export const useCategories = () => {
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) =>
-      Promise.resolve(categoryApi.create(data)),
+    mutationFn: (data: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) => categoryApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.categories });
     },
@@ -96,8 +95,7 @@ export const useCreateCategory = () => {
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<Category> }) =>
-      Promise.resolve(categoryApi.update(id, updates)),
+    mutationFn: ({ id, updates }: { id: string; updates: Partial<Category> }) => categoryApi.update(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.categories });
     },
@@ -107,7 +105,7 @@ export const useUpdateCategory = () => {
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(categoryApi.delete(id)),
+    mutationFn: (id: string) => categoryApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.categories });
     },
@@ -132,8 +130,7 @@ export const useLowStockItems = () => {
 export const useCreateItem = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>) =>
-      Promise.resolve(itemApi.create(data)),
+    mutationFn: (data: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>) => itemApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.items });
     },
@@ -143,8 +140,7 @@ export const useCreateItem = () => {
 export const useUpdateItem = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<Item> }) =>
-      Promise.resolve(itemApi.update(id, updates)),
+    mutationFn: ({ id, updates }: { id: string; updates: Partial<Item> }) => itemApi.update(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.items });
     },
@@ -154,7 +150,7 @@ export const useUpdateItem = () => {
 export const useDeleteItem = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(itemApi.delete(id)),
+    mutationFn: (id: string) => itemApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.items });
     },
@@ -172,8 +168,7 @@ export const useSuppliers = () => {
 export const useCreateSupplier = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Omit<Supplier, 'id' | 'createdAt' | 'updatedAt'>) =>
-      Promise.resolve(supplierApi.create(data)),
+    mutationFn: (data: Omit<Supplier, 'id' | 'createdAt' | 'updatedAt'>) => supplierApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.suppliers });
     },
@@ -183,8 +178,7 @@ export const useCreateSupplier = () => {
 export const useUpdateSupplier = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<Supplier> }) =>
-      Promise.resolve(supplierApi.update(id, updates)),
+    mutationFn: ({ id, updates }: { id: string; updates: Partial<Supplier> }) => supplierApi.update(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.suppliers });
     },
@@ -194,7 +188,7 @@ export const useUpdateSupplier = () => {
 export const useDeleteSupplier = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(supplierApi.delete(id)),
+    mutationFn: (id: string) => supplierApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.suppliers });
     },
@@ -213,7 +207,7 @@ export const useCreateIncomingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: Omit<IncomingGoods, 'id' | 'transactionNumber' | 'status' | 'createdAt' | 'updatedAt'>) =>
-      Promise.resolve(incomingGoodsApi.create(data)),
+      incomingGoodsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.incomingGoods });
     },
@@ -224,7 +218,7 @@ export const useUpdateIncomingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: Partial<IncomingGoods> }) =>
-      Promise.resolve(incomingGoodsApi.update(id, updates)),
+      incomingGoodsApi.update(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.incomingGoods });
     },
@@ -234,7 +228,7 @@ export const useUpdateIncomingGoods = () => {
 export const useSubmitIncomingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(incomingGoodsApi.submit(id)),
+    mutationFn: (id: string) => incomingGoodsApi.submit(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.incomingGoods });
     },
@@ -245,11 +239,12 @@ export const useApproveIncomingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, userId, signature }: { id: string; userId: string; signature: string }) =>
-      Promise.resolve(incomingGoodsApi.approve(id, userId, signature)),
+      incomingGoodsApi.approve(id, userId, signature),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.incomingGoods });
       queryClient.invalidateQueries({ queryKey: queryKeys.items });
       queryClient.invalidateQueries({ queryKey: queryKeys.stockMovements });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
     },
   });
 };
@@ -258,7 +253,7 @@ export const useRejectIncomingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, userId, reason }: { id: string; userId: string; reason: string }) =>
-      Promise.resolve(incomingGoodsApi.reject(id, userId, reason)),
+      incomingGoodsApi.reject(id, userId, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.incomingGoods });
     },
@@ -268,7 +263,7 @@ export const useRejectIncomingGoods = () => {
 export const useDeleteIncomingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(incomingGoodsApi.delete(id)),
+    mutationFn: (id: string) => incomingGoodsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.incomingGoods });
     },
@@ -287,7 +282,7 @@ export const useCreateOutgoingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: Omit<OutgoingGoods, 'id' | 'transactionNumber' | 'status' | 'createdAt' | 'updatedAt'>) =>
-      Promise.resolve(outgoingGoodsApi.create(data)),
+      outgoingGoodsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.outgoingGoods });
     },
@@ -298,7 +293,7 @@ export const useUpdateOutgoingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: Partial<OutgoingGoods> }) =>
-      Promise.resolve(outgoingGoodsApi.update(id, updates)),
+      outgoingGoodsApi.update(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.outgoingGoods });
     },
@@ -308,7 +303,7 @@ export const useUpdateOutgoingGoods = () => {
 export const useSubmitOutgoingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(outgoingGoodsApi.submit(id)),
+    mutationFn: (id: string) => outgoingGoodsApi.submit(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.outgoingGoods });
     },
@@ -319,11 +314,12 @@ export const useApproveOutgoingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, userId, signature }: { id: string; userId: string; signature: string }) =>
-      Promise.resolve(outgoingGoodsApi.approve(id, userId, signature)),
+      outgoingGoodsApi.approve(id, userId, signature),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.outgoingGoods });
       queryClient.invalidateQueries({ queryKey: queryKeys.items });
       queryClient.invalidateQueries({ queryKey: queryKeys.stockMovements });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
     },
   });
 };
@@ -332,7 +328,7 @@ export const useRejectOutgoingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, userId, reason }: { id: string; userId: string; reason: string }) =>
-      Promise.resolve(outgoingGoodsApi.reject(id, userId, reason)),
+      outgoingGoodsApi.reject(id, userId, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.outgoingGoods });
     },
@@ -342,7 +338,7 @@ export const useRejectOutgoingGoods = () => {
 export const useDeleteOutgoingGoods = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(outgoingGoodsApi.delete(id)),
+    mutationFn: (id: string) => outgoingGoodsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.outgoingGoods });
     },
@@ -361,7 +357,7 @@ export const useCreateItemRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: Omit<ItemRequest, 'id' | 'transactionNumber' | 'status' | 'createdAt' | 'updatedAt'>) =>
-      Promise.resolve(itemRequestApi.create(data)),
+      itemRequestApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.itemRequests });
     },
@@ -372,7 +368,7 @@ export const useUpdateItemRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: Partial<ItemRequest> }) =>
-      Promise.resolve(itemRequestApi.update(id, updates)),
+      itemRequestApi.update(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.itemRequests });
     },
@@ -382,7 +378,7 @@ export const useUpdateItemRequest = () => {
 export const useSubmitItemRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(itemRequestApi.submit(id)),
+    mutationFn: (id: string) => itemRequestApi.submit(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.itemRequests });
     },
@@ -393,11 +389,12 @@ export const useApproveItemRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, userId, signature }: { id: string; userId: string; signature: string }) =>
-      Promise.resolve(itemRequestApi.approve(id, userId, signature)),
+      itemRequestApi.approve(id, userId, signature),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.itemRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.items });
       queryClient.invalidateQueries({ queryKey: queryKeys.stockMovements });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
     },
   });
 };
@@ -406,7 +403,7 @@ export const useRejectItemRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, userId, reason }: { id: string; userId: string; reason: string }) =>
-      Promise.resolve(itemRequestApi.reject(id, userId, reason)),
+      itemRequestApi.reject(id, userId, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.itemRequests });
     },
@@ -416,7 +413,7 @@ export const useRejectItemRequest = () => {
 export const useDeleteItemRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(itemRequestApi.delete(id)),
+    mutationFn: (id: string) => itemRequestApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.itemRequests });
     },
@@ -435,7 +432,7 @@ export const useCreatePurchaseOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: Omit<PurchaseOrder, 'id' | 'transactionNumber' | 'status' | 'createdAt' | 'updatedAt'>) =>
-      Promise.resolve(purchaseOrderApi.create(data)),
+      purchaseOrderApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.purchaseOrders });
     },
@@ -446,7 +443,7 @@ export const useUpdatePurchaseOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: Partial<PurchaseOrder> }) =>
-      Promise.resolve(purchaseOrderApi.update(id, updates)),
+      purchaseOrderApi.update(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.purchaseOrders });
     },
@@ -456,7 +453,7 @@ export const useUpdatePurchaseOrder = () => {
 export const useSubmitPurchaseOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(purchaseOrderApi.submit(id)),
+    mutationFn: (id: string) => purchaseOrderApi.submit(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.purchaseOrders });
     },
@@ -467,11 +464,12 @@ export const useApprovePurchaseOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, userId, signature }: { id: string; userId: string; signature: string }) =>
-      Promise.resolve(purchaseOrderApi.approve(id, userId, signature)),
+      purchaseOrderApi.approve(id, userId, signature),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.purchaseOrders });
       queryClient.invalidateQueries({ queryKey: queryKeys.items });
       queryClient.invalidateQueries({ queryKey: queryKeys.stockMovements });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
     },
   });
 };
@@ -480,7 +478,7 @@ export const useRejectPurchaseOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, userId, reason }: { id: string; userId: string; reason: string }) =>
-      Promise.resolve(purchaseOrderApi.reject(id, userId, reason)),
+      purchaseOrderApi.reject(id, userId, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.purchaseOrders });
     },
@@ -490,7 +488,7 @@ export const useRejectPurchaseOrder = () => {
 export const useDeletePurchaseOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => Promise.resolve(purchaseOrderApi.delete(id)),
+    mutationFn: (id: string) => purchaseOrderApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.purchaseOrders });
     },
@@ -502,5 +500,21 @@ export const useStockMovements = () => {
   return useQuery({
     queryKey: queryKeys.stockMovements,
     queryFn: stockMovementApi.getAll,
+  });
+};
+
+export const useStockMovementsByItem = (itemId: string) => {
+  return useQuery({
+    queryKey: [...queryKeys.stockMovements, itemId],
+    queryFn: () => stockMovementApi.getByItemId(itemId),
+    enabled: !!itemId,
+  });
+};
+
+// Dashboard Hooks
+export const useDashboardStats = () => {
+  return useQuery({
+    queryKey: queryKeys.dashboard,
+    queryFn: dashboardApi.getStats,
   });
 };
