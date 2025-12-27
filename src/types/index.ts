@@ -131,19 +131,6 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
-// LocalStorage Keys
-export const STORAGE_KEYS = {
-  USERS: 'inventory_users',
-  CATEGORIES: 'inventory_categories',
-  ITEMS: 'inventory_items',
-  SUPPLIERS: 'inventory_suppliers',
-  INCOMING_GOODS: 'inventory_incoming_goods',
-  OUTGOING_GOODS: 'inventory_outgoing_goods',
-  ITEM_REQUESTS: 'inventory_item_requests',
-  PURCHASE_ORDERS: 'inventory_purchase_orders',
-  STOCK_MOVEMENTS: 'inventory_stock_movements',
-  CURRENT_USER: 'inventory_current_user',
-} as const;
 
 // Role Labels
 export const ROLE_LABELS: Record<UserRole, string> = {

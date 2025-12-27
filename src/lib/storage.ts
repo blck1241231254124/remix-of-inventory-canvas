@@ -1,33 +1,4 @@
-import { STORAGE_KEYS } from '@/types';
-
-// Generic storage operations
-export const storage = {
-  get: <T>(key: string): T | null => {
-    try {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : null;
-    } catch (error) {
-      console.error(`Error reading from localStorage: ${key}`, error);
-      return null;
-    }
-  },
-
-  set: <T>(key: string, value: T): void => {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(`Error writing to localStorage: ${key}`, error);
-    }
-  },
-
-  remove: (key: string): void => {
-    try {
-      localStorage.removeItem(key);
-    } catch (error) {
-      console.error(`Error removing from localStorage: ${key}`, error);
-    }
-  },
-};
+// Utility functions (no longer using localStorage for data)
 
 // Generate unique ID
 export const generateId = (): string => {
@@ -47,9 +18,4 @@ export const generateTransactionNumber = (prefix: string): string => {
 // Get current timestamp
 export const getCurrentTimestamp = (): string => {
   return new Date().toISOString();
-};
-
-// Check if data is seeded
-export const isDataSeeded = (): boolean => {
-  return storage.get(STORAGE_KEYS.USERS) !== null;
 };

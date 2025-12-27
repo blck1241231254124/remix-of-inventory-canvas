@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState } from '@/types';
 import { authApi } from '@/lib/api';
-import { seedData } from '@/lib/seed';
 
 interface AuthContextType extends AuthState {
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,31 +15,44 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     user: null,
     isAuthenticated: false,
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Seed data on first load
-    seedData();
+    // Check for existing session on mount
+    const checkAuth = async () => {
+      try {
+        const currentUser = await authApi.getCurrentUser();
+        if (currentUser) {
+          setState({
+            user: currentUser,
+            isAuthenticated: true,
+          });
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Check for existing session
-    const currentUser = authApi.getCurrentUser();
-    if (currentUser) {
-      setState({
-        user: currentUser,
-        isAuthenticated: true,
-      });
-    }
+    checkAuth();
   }, []);
 
-  const login = (username: string, password: string): boolean => {
-    const user = authApi.login(username, password);
-    if (user) {
-      setState({
-        user,
-        isAuthenticated: true,
-      });
-      return true;
+  const login = async (username: string, password: string): Promise<boolean> => {
+    try {
+      const user = await authApi.login(username, password);
+      if (user) {
+        setState({
+          user,
+          isAuthenticated: true,
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
@@ -51,7 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ ...state, login, logout }}>
+    <AuthContext.Provider value={{ ...state, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
