@@ -1,0 +1,55 @@
+import { STORAGE_KEYS } from '@/types';
+
+// Generic storage operations
+export const storage = {
+  get: <T>(key: string): T | null => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : null;
+    } catch (error) {
+      console.error(`Error reading from localStorage: ${key}`, error);
+      return null;
+    }
+  },
+
+  set: <T>(key: string, value: T): void => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error(`Error writing to localStorage: ${key}`, error);
+    }
+  },
+
+  remove: (key: string): void => {
+    try {
+      localStorage.removeItem(key);
+    } catch (error) {
+      console.error(`Error removing from localStorage: ${key}`, error);
+    }
+  },
+};
+
+// Generate unique ID
+export const generateId = (): string => {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
+// Generate transaction number
+export const generateTransactionNumber = (prefix: string): string => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const random = Math.random().toString(36).substr(2, 4).toUpperCase();
+  return `${prefix}-${year}${month}${day}-${random}`;
+};
+
+// Get current timestamp
+export const getCurrentTimestamp = (): string => {
+  return new Date().toISOString();
+};
+
+// Check if data is seeded
+export const isDataSeeded = (): boolean => {
+  return storage.get(STORAGE_KEYS.USERS) !== null;
+};
