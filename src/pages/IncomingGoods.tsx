@@ -1,20 +1,57 @@
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useIncomingGoods, useSuppliers, useItems, useUsers, useCreateIncomingGoods, useUpdateIncomingGoods, useSubmitIncomingGoods, useDeleteIncomingGoods } from '@/hooks/useApi';
-import { IncomingGoods as IncomingGoodsType, TransactionItem } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { StatusBadge } from '@/components/StatusBadge';
-import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Search, Send, Eye, X } from 'lucide-react';
-import { format } from 'date-fns';
+import React, { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  useIncomingGoods,
+  useSuppliers,
+  useItems,
+  useUsers,
+  useCreateIncomingGoods,
+  useUpdateIncomingGoods,
+  useSubmitIncomingGoods,
+  useDeleteIncomingGoods,
+} from "@/hooks/useApi";
+import { IncomingGoods as IncomingGoodsType, TransactionItem } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { StatusBadge } from "@/components/StatusBadge";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2, Search, Send, Eye, X } from "lucide-react";
+import { format } from "date-fns";
 
 const IncomingGoods: React.FC = () => {
   const { user } = useAuth();
@@ -27,24 +64,45 @@ const IncomingGoods: React.FC = () => {
   const submitTransaction = useSubmitIncomingGoods();
   const deleteTransaction = useDeleteIncomingGoods();
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState<IncomingGoodsType | null>(null);
-  const [viewingTransaction, setViewingTransaction] = useState<IncomingGoodsType | null>(null);
+  const [editingTransaction, setEditingTransaction] =
+    useState<IncomingGoodsType | null>(null);
+  const [viewingTransaction, setViewingTransaction] =
+    useState<IncomingGoodsType | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [submitId, setSubmitId] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
-    supplierId: '',
-    referenceNumber: '',
-    receivedDate: new Date().toISOString().split('T')[0],
-    notes: '',
+    supplierId: "",
+    referenceNumber: "",
+    receivedDate: new Date().toISOString().split("T")[0],
+    notes: "",
     items: [] as TransactionItem[],
   });
 
-  const [newItem, setNewItem] = useState({ itemId: '', quantity: 0 });
+  const [newItem, setNewItem] = useState({ itemId: "", quantity: 0 });
+
+  // Utility function to safely format dates
+  const safeFormatDate = (
+    value?: string | Date | null,
+    formatStr: string = "dd/MM/yyyy"
+  ) => {
+    if (!value) return "-";
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? "-" : format(date, formatStr);
+  };
+
+  // Extract date only from ISO string (for form input)
+  const extractDateFromISO = (isoString: string) => {
+    try {
+      return isoString.split("T")[0];
+    } catch {
+      return new Date().toISOString().split("T")[0];
+    }
+  };
 
   const filteredTransactions = transactions.filter(
     (t) =>
@@ -53,26 +111,26 @@ const IncomingGoods: React.FC = () => {
   );
 
   const getSupplierName = (supplierId: string) => {
-    return suppliers.find((s) => s.id === supplierId)?.name || 'Unknown';
+    return suppliers.find((s) => s.id === supplierId)?.name || "Unknown";
   };
 
   const getItemName = (itemId: string) => {
-    return items.find((i) => i.id === itemId)?.name || 'Unknown';
+    return items.find((i) => i.id === itemId)?.name || "Unknown";
   };
 
   const getUserName = (userId: string) => {
-    return users.find((u) => u.id === userId)?.name || 'Unknown';
+    return users.find((u) => u.id === userId)?.name || "Unknown";
   };
 
   const resetForm = () => {
     setFormData({
-      supplierId: '',
-      referenceNumber: '',
-      receivedDate: new Date().toISOString().split('T')[0],
-      notes: '',
+      supplierId: "",
+      referenceNumber: "",
+      receivedDate: new Date().toISOString().split("T")[0],
+      notes: "",
       items: [],
     });
-    setNewItem({ itemId: '', quantity: 0 });
+    setNewItem({ itemId: "", quantity: 0 });
   };
 
   const openCreateDialog = () => {
@@ -82,14 +140,14 @@ const IncomingGoods: React.FC = () => {
   };
 
   const openEditDialog = (transaction: IncomingGoodsType) => {
-    if (transaction.status !== 'DRAFT') {
-      toast.error('Only draft transactions can be edited');
+    if (transaction.status !== "DRAFT") {
+      toast.error("Only draft transactions can be edited");
       return;
     }
     setFormData({
       supplierId: transaction.supplierId,
       referenceNumber: transaction.referenceNumber,
-      receivedDate: transaction.receivedDate.split('T')[0],
+      receivedDate: extractDateFromISO(transaction.receivedDate),
       notes: transaction.notes,
       items: transaction.items,
     });
@@ -104,18 +162,18 @@ const IncomingGoods: React.FC = () => {
 
   const addItem = () => {
     if (!newItem.itemId || newItem.quantity <= 0) {
-      toast.error('Please select an item and enter a valid quantity');
+      toast.error("Please select an item and enter a valid quantity");
       return;
     }
     if (formData.items.some((i) => i.itemId === newItem.itemId)) {
-      toast.error('Item already added');
+      toast.error("Item already added");
       return;
     }
     setFormData({
       ...formData,
       items: [...formData.items, { ...newItem }],
     });
-    setNewItem({ itemId: '', quantity: 0 });
+    setNewItem({ itemId: "", quantity: 0 });
   };
 
   const removeItem = (itemId: string) => {
@@ -126,8 +184,12 @@ const IncomingGoods: React.FC = () => {
   };
 
   const onSubmit = async () => {
-    if (!formData.supplierId || !formData.referenceNumber || formData.items.length === 0) {
-      toast.error('Please fill all required fields and add at least one item');
+    if (
+      !formData.supplierId ||
+      !formData.referenceNumber ||
+      formData.items.length === 0
+    ) {
+      toast.error("Please fill all required fields and add at least one item");
       return;
     }
 
@@ -137,17 +199,17 @@ const IncomingGoods: React.FC = () => {
           id: editingTransaction.id,
           updates: formData,
         });
-        toast.success('Transaction updated successfully');
+        toast.success("Transaction updated successfully");
       } else {
         await createTransaction.mutateAsync({
           ...formData,
-          createdBy: user?.id || '',
+          createdBy: user?.id || "",
         });
-        toast.success('Transaction created successfully');
+        toast.success("Transaction created successfully");
       }
       setIsDialogOpen(false);
     } catch (error) {
-      toast.error('Failed to save transaction');
+      toast.error("Failed to save transaction");
     }
   };
 
@@ -155,10 +217,10 @@ const IncomingGoods: React.FC = () => {
     if (!submitId) return;
     try {
       await submitTransaction.mutateAsync(submitId);
-      toast.success('Transaction submitted for approval');
+      toast.success("Transaction submitted for approval");
       setSubmitId(null);
     } catch (error) {
-      toast.error('Failed to submit transaction');
+      toast.error("Failed to submit transaction");
     }
   };
 
@@ -166,10 +228,10 @@ const IncomingGoods: React.FC = () => {
     if (!deleteId) return;
     try {
       await deleteTransaction.mutateAsync(deleteId);
-      toast.success('Transaction deleted successfully');
+      toast.success("Transaction deleted successfully");
       setDeleteId(null);
     } catch (error) {
-      toast.error('Failed to delete transaction');
+      toast.error("Failed to delete transaction");
     }
   };
 
@@ -178,7 +240,9 @@ const IncomingGoods: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Incoming Goods</h1>
-          <p className="text-muted-foreground">Manage incoming goods transactions</p>
+          <p className="text-muted-foreground">
+            Manage incoming goods transactions
+          </p>
         </div>
         <Button onClick={openCreateDialog}>
           <Plus className="h-4 w-4 mr-2" />
@@ -202,7 +266,9 @@ const IncomingGoods: React.FC = () => {
           {isLoading ? (
             <p className="text-center py-8 text-muted-foreground">Loading...</p>
           ) : filteredTransactions.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">No transactions found</p>
+            <p className="text-center py-8 text-muted-foreground">
+              No transactions found
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
@@ -219,27 +285,45 @@ const IncomingGoods: React.FC = () => {
                 <TableBody>
                   {filteredTransactions.map((t) => (
                     <TableRow key={t.id}>
-                      <TableCell className="font-medium">{t.transactionNumber}</TableCell>
+                      <TableCell className="font-medium">
+                        {t.transactionNumber}
+                      </TableCell>
                       <TableCell>{t.referenceNumber}</TableCell>
                       <TableCell>{getSupplierName(t.supplierId)}</TableCell>
-                      <TableCell>{format(new Date(t.receivedDate), 'dd/MM/yyyy')}</TableCell>
+                      <TableCell>{safeFormatDate(t.receivedDate)}</TableCell>
                       <TableCell>
                         <StatusBadge status={t.status} />
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => openViewDialog(t)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openViewDialog(t)}
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          {t.status === 'DRAFT' && (
+                          {t.status === "DRAFT" && (
                             <>
-                              <Button variant="ghost" size="icon" onClick={() => openEditDialog(t)}>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => openEditDialog(t)}
+                              >
                                 <Pencil className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => setSubmitId(t.id)}>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setSubmitId(t.id)}
+                              >
                                 <Send className="h-4 w-4 text-primary" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => setDeleteId(t.id)}>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setDeleteId(t.id)}
+                              >
                                 <Trash2 className="h-4 w-4 text-destructive" />
                               </Button>
                             </>
@@ -260,7 +344,7 @@ const IncomingGoods: React.FC = () => {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingTransaction ? 'Edit Transaction' : 'New Incoming Goods'}
+              {editingTransaction ? "Edit Transaction" : "New Incoming Goods"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -269,7 +353,9 @@ const IncomingGoods: React.FC = () => {
                 <Label>Supplier</Label>
                 <Select
                   value={formData.supplierId}
-                  onValueChange={(v) => setFormData({ ...formData, supplierId: v })}
+                  onValueChange={(v) =>
+                    setFormData({ ...formData, supplierId: v })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select supplier" />
@@ -287,7 +373,12 @@ const IncomingGoods: React.FC = () => {
                 <Label>Reference Number</Label>
                 <Input
                   value={formData.referenceNumber}
-                  onChange={(e) => setFormData({ ...formData, referenceNumber: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      referenceNumber: e.target.value,
+                    })
+                  }
                   placeholder="e.g., INV-001"
                 />
               </div>
@@ -297,14 +388,18 @@ const IncomingGoods: React.FC = () => {
               <Input
                 type="date"
                 value={formData.receivedDate}
-                onChange={(e) => setFormData({ ...formData, receivedDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, receivedDate: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
               <Label>Notes</Label>
               <Textarea
                 value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
                 placeholder="Additional notes..."
               />
             </div>
@@ -332,8 +427,13 @@ const IncomingGoods: React.FC = () => {
                   type="number"
                   placeholder="Qty"
                   className="w-24"
-                  value={newItem.quantity || ''}
-                  onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 0 })}
+                  value={newItem.quantity || ""}
+                  onChange={(e) =>
+                    setNewItem({
+                      ...newItem,
+                      quantity: parseInt(e.target.value) || 0,
+                    })
+                  }
                 />
                 <Button type="button" onClick={addItem}>
                   Add
@@ -373,11 +473,15 @@ const IncomingGoods: React.FC = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={onSubmit}>
-              {editingTransaction ? 'Update' : 'Create'} as Draft
+              {editingTransaction ? "Update" : "Create"} as Draft
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -393,8 +497,12 @@ const IncomingGoods: React.FC = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-muted-foreground">Transaction Number</Label>
-                  <p className="font-medium">{viewingTransaction.transactionNumber}</p>
+                  <Label className="text-muted-foreground">
+                    Transaction Number
+                  </Label>
+                  <p className="font-medium">
+                    {viewingTransaction.transactionNumber}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Status</Label>
@@ -404,21 +512,29 @@ const IncomingGoods: React.FC = () => {
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Supplier</Label>
-                  <p className="font-medium">{getSupplierName(viewingTransaction.supplierId)}</p>
+                  <p className="font-medium">
+                    {getSupplierName(viewingTransaction.supplierId)}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Reference Number</Label>
-                  <p className="font-medium">{viewingTransaction.referenceNumber}</p>
+                  <Label className="text-muted-foreground">
+                    Reference Number
+                  </Label>
+                  <p className="font-medium">
+                    {viewingTransaction.referenceNumber}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Received Date</Label>
                   <p className="font-medium">
-                    {format(new Date(viewingTransaction.receivedDate), 'dd/MM/yyyy')}
+                    {safeFormatDate(viewingTransaction.receivedDate)}
                   </p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Created By</Label>
-                  <p className="font-medium">{getUserName(viewingTransaction.createdBy)}</p>
+                  <p className="font-medium">
+                    {getUserName(viewingTransaction.createdBy)}
+                  </p>
                 </div>
               </div>
 
@@ -451,28 +567,38 @@ const IncomingGoods: React.FC = () => {
                 </div>
               </div>
 
-              {viewingTransaction.status === 'APPROVED' && viewingTransaction.signatureImage && (
-                <div>
-                  <Label className="text-muted-foreground">Approval Signature</Label>
-                  <div className="border rounded-lg p-2 mt-2 bg-card">
-                    <img
-                      src={viewingTransaction.signatureImage}
-                      alt="Signature"
-                      className="max-w-full h-auto"
-                    />
+              {viewingTransaction.status === "APPROVED" &&
+                viewingTransaction.signatureImage && (
+                  <div>
+                    <Label className="text-muted-foreground">
+                      Approval Signature
+                    </Label>
+                    <div className="border rounded-lg p-2 mt-2 bg-card">
+                      <img
+                        src={viewingTransaction.signatureImage}
+                        alt="Signature"
+                        className="max-w-full h-auto"
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Approved by{" "}
+                      {getUserName(viewingTransaction.approvedBy || "")} on{" "}
+                      {safeFormatDate(
+                        viewingTransaction.approvedAt,
+                        "dd/MM/yyyy HH:mm"
+                      )}
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Approved by {getUserName(viewingTransaction.approvedBy || '')} on{' '}
-                    {viewingTransaction.approvedAt &&
-                      format(new Date(viewingTransaction.approvedAt), 'dd/MM/yyyy HH:mm')}
-                  </p>
-                </div>
-              )}
+                )}
 
-              {viewingTransaction.status === 'REJECTED' && (
+              {viewingTransaction.status === "REJECTED" && (
                 <div>
-                  <Label className="text-muted-foreground">Rejection Reason</Label>
-                  <p className="text-destructive">{viewingTransaction.rejectionReason}</p>
+                  <Label className="text-muted-foreground">
+                    Rejection Reason
+                  </Label>
+                  <p className="text-destructive">
+                    {viewingTransaction.rejectionReason}
+                  </p>
                 </div>
               )}
             </div>
@@ -486,7 +612,8 @@ const IncomingGoods: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Submit for Approval</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to submit this transaction for approval? You won't be able to edit it after submission.
+              Are you sure you want to submit this transaction for approval? You
+              won't be able to edit it after submission.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -502,7 +629,8 @@ const IncomingGoods: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this transaction? This action cannot be undone.
+              Are you sure you want to delete this transaction? This action
+              cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -31,6 +31,8 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    console.log(process.env.JWT_SECRET)
+
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword, token });
   } catch (error) {
